@@ -114,7 +114,7 @@ const teamMembers = [
   },
   {
     name: "Prajwal Fupare",
-    photo: "/images/prajwal.jpg",
+    photo: "/images/prajwal.jpeg",
     github: "https://github.com/prajwalfupare",
     linkedin: "https://linkedin.com/in/prajwal-fupare",
   },
@@ -131,7 +131,7 @@ const projects = [
       "Jan Consent is a revolutionary digital consent management platform built on blockchain technology. It allows citizens to grant, track, and revoke consent for data sharing across government and private services. The system eliminates paperwork, ensures transparency, and creates an immutable audit trail for every consent transaction. Ideal for healthcare authorizations, legal agreements, and KYC processes.",
     tech: ["Blockchain", "Solidity", "Web3.js", "Node.js", "Ethereum"],
     github: "https://github.com/teamlazycoder/JanConsent",
-    emoji: "🔗",
+    // emoji: "🔗",
   },
   {
     name: "Krishak Mitra AI",
@@ -140,7 +140,7 @@ const projects = [
       "Krishak Mitra AI is an intelligent virtual assistant designed specifically for Indian farmers. Using advanced computer vision and machine learning, it detects crop diseases from smartphone photos, provides weather forecasts and soil analysis, and predicts market prices for better selling decisions. The system works in multiple Indian languages through voice and text interfaces, making advanced agricultural technology accessible to rural farmers.",
     tech: ["Python", "TensorFlow", "Flask", "OpenCV", "NLP"],
     github: "https://github.com/teamlazycoder/KrishakMitraAI",
-    emoji: "🌾",
+    // emoji: "🌾",
   },
   {
     name: "Maternal System",
@@ -149,7 +149,7 @@ const projects = [
       "The Maternal System is a full-featured healthcare platform that tracks maternal health from pregnancy through postpartum care. It manages prenatal checkup schedules, vaccination records for children under five, growth milestone tracking, and connects patients directly with healthcare providers. The system sends automated reminders for appointments and vaccinations via SMS and email, reducing missed care visits and improving health outcomes for mothers and children in underserved communities.",
     tech: ["React", "Node.js", "PostgreSQL", "Twilio", "Express"],
     github: "https://github.com/lazycoders/maternal-system",
-    emoji: "🏥",
+    // emoji: "🏥",
   },
   {
     name: "Industrial Wastewater Management",
@@ -158,7 +158,7 @@ const projects = [
       "This end-to-end environmental monitoring system combines IoT sensors with machine learning to manage industrial wastewater in real-time. Sensors placed in treatment plants continuously monitor pH levels, chemical concentrations, temperature, and turbidity. The ML model predicts contamination trends before they exceed safety limits and automatically triggers treatment adjustments. The system ensures regulatory compliance, reduces environmental impact, and provides detailed reporting for audits and certifications.",
     tech: ["IoT", "Python", "Scikit-learn", "MQTT", "Arduino", "React"],
     github: "https://github.com/lazycoders/wastewater-mgmt",
-    emoji: "🏭",
+    // emoji: "🏭",
   },
 ];
 
