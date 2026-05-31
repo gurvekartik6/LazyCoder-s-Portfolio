@@ -58,17 +58,31 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// FIXED SESSION CONFIGURATION FOR RENDER
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "lazycoders_secret",
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true, // Changed from false to true
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: false, // Set to false for Render (HTTP/HTTPS handled by proxy)
+      httpOnly: true,
       maxAge: 60 * 60 * 1000, // 1 hour
+      sameSite: 'lax', // Required for cross-origin requests
     },
+    name: 'sessionId', // Explicit session cookie name
   })
 );
+
+// Session debugging middleware
+app.use((req, res, next) => {
+  if (req.path.startsWith('/admin') || req.path.startsWith('/debug')) {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+    console.log(`  Session ID: ${req.session?.id || 'no session'}`);
+    console.log(`  isAdmin: ${req.session?.isAdmin || false}`);
+  }
+  next();
+});
 
 // ─────────────────────────────────────────────
 // Data: Team Members (roles and skills removed)
@@ -248,14 +262,16 @@ app.post("/contact", async (req, res) => {
 });
 
 // ─────────────────────────────────────────────
-// ADMIN ROUTES - COMPLETE WORKING VERSION
+// ADMIN ROUTES - COMPLETE FIXED VERSION
 // ─────────────────────────────────────────────
 
 /** Admin Login Page (GET) */
 app.get("/admin/login", (req, res) => {
   console.log("=== Admin login page accessed ===");
+  console.log("Current session ID:", req.session?.id);
+  console.log("Current isAdmin:", req.session?.isAdmin);
   
-  if (req.session.isAdmin) {
+  if (req.session && req.session.isAdmin) {
     console.log("User already logged in, redirecting to /admin");
     return res.redirect("/admin");
   }
@@ -266,7 +282,7 @@ app.get("/admin/login", (req, res) => {
   });
 });
 
-/** Admin Login (POST) - FIXED WORKING VERSION */
+/** Admin Login (POST) - FIXED */
 app.post("/admin/login", (req, res) => {
   const { username, password } = req.body;
   
@@ -274,43 +290,30 @@ app.post("/admin/login", (req, res) => {
   console.log("ADMIN LOGIN ATTEMPT");
   console.log("Username entered:", username);
   console.log("Password entered:", password);
-  console.log("Expected username: lazycoders");
-  console.log("Expected password: team2026");
+  console.log("Session ID before login:", req.session?.id);
   console.log("=========================================");
   
-  // Hardcoded credentials (always works)
+  // Hardcoded credentials
   if (username === "lazycoders" && password === "team2026") {
+    // Set session
     req.session.isAdmin = true;
+    req.session.authenticated = true;
+    req.session.loginTime = Date.now();
     
-    req.session.save((err) => {
+    console.log("Session set with isAdmin = true");
+    console.log("Session ID after setting:", req.session.id);
+    
+    // Save session explicitly
+    req.session.save(function(err) {
       if (err) {
         console.error("Session save error:", err);
         return res.redirect("/admin/login?error=Session+error");
       }
       
-      console.log("✅ LOGIN SUCCESSFUL! Session saved");
-      console.log("Session ID:", req.session.id);
-      console.log("Session isAdmin:", req.session.isAdmin);
+      console.log("✅ Session saved successfully!");
+      console.log("Verified - Session isAdmin:", req.session.isAdmin);
       
-      res.redirect("/admin");
-    });
-    return;
-  }
-  
-  // Also check environment variables if they exist
-  const envUser = process.env.ADMIN_USERNAME;
-  const envPass = process.env.ADMIN_PASSWORD;
-  
-  if (envUser && envPass && username === envUser && password === envPass) {
-    req.session.isAdmin = true;
-    
-    req.session.save((err) => {
-      if (err) {
-        console.error("Session save error:", err);
-        return res.redirect("/admin/login?error=Session+error");
-      }
-      
-      console.log("✅ LOGIN SUCCESSFUL via env vars!");
+      // Redirect to admin dashboard
       res.redirect("/admin");
     });
     return;
@@ -320,32 +323,20 @@ app.post("/admin/login", (req, res) => {
   res.redirect("/admin/login?error=Invalid+credentials");
 });
 
-/** Admin Logout */
-app.get("/admin/logout", (req, res) => {
-  console.log("=== Admin logout ===");
-  req.session.destroy((err) => {
-    if (err) {
-      console.error("Logout error:", err);
-    }
-    res.redirect("/admin/login");
-  });
-});
-
-/** Admin Dashboard */
-app.get("/admin", (req, res, next) => {
-  console.log("=== Admin dashboard access attempt ===");
-  console.log("Session exists:", !!req.session);
-  console.log("Session isAdmin:", req.session?.isAdmin);
+/** Admin Dashboard - Simplified Check */
+app.get("/admin", async (req, res) => {
+  console.log("=== Admin dashboard access ===");
   console.log("Session ID:", req.session?.id);
+  console.log("Session isAdmin:", req.session?.isAdmin);
+  console.log("Session authenticated:", req.session?.authenticated);
   
+  // Check authentication
   if (!req.session || !req.session.isAdmin) {
     console.log("❌ Not authenticated, redirecting to login");
     return res.redirect("/admin/login");
   }
   
-  next();
-}, async (req, res) => {
-  console.log("📊 Admin dashboard accessed - User is authenticated");
+  console.log("✅ User is authenticated, loading dashboard");
   
   try {
     const result = await pool.query(
@@ -371,6 +362,17 @@ app.get("/admin", (req, res, next) => {
       dbError: "Could not load messages from database: " + err.message
     });
   }
+});
+
+/** Admin Logout */
+app.get("/admin/logout", (req, res) => {
+  console.log("=== Admin logout ===");
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Logout error:", err);
+    }
+    res.redirect("/admin/login");
+  });
 });
 
 /** Export messages as CSV */
@@ -442,7 +444,12 @@ app.get("/debug/session", (req, res) => {
     hasSession: !!req.session,
     isAdmin: req.session?.isAdmin || false,
     sessionID: req.session?.id || "no session",
-    cookieSettings: req.session?.cookie || "none"
+    authenticated: req.session?.authenticated || false,
+    cookieSettings: {
+      secure: req.session?.cookie?.secure || false,
+      httpOnly: req.session?.cookie?.httpOnly || true,
+      sameSite: req.session?.cookie?.sameSite || 'lax'
+    }
   });
 });
 
