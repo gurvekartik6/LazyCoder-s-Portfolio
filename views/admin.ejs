@@ -1,0 +1,112 @@
+<%- include('partials/header', { pageTitle: 'Admin Dashboard' }) %>
+
+<section class="pt-12 pb-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-10">
+      <div>
+        <p class="text-xs font-700 uppercase tracking-widest text-brand-500 mb-1">Admin Panel</p>
+        <h1 class="font-display text-3xl font-700 text-gray-900 dark:text-white">Messages Dashboard</h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="/admin/export-csv"
+           class="btn-outline flex items-center gap-2 text-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          Export CSV
+        </a>
+        <a href="/admin/logout" class="btn-outline text-sm text-red-500 border-red-200 dark:border-red-900 hover:bg-red-50 dark:hover:bg-red-900/20">
+          Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Error Banner -->
+    <% if (typeof dbError !== 'undefined' && dbError) { %>
+    <div class="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400">
+      ⚠️ <%= dbError %>
+    </div>
+    <% } %>
+
+    <!-- Stats Row -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+      <div class="stat-card">
+        <p class="text-3xl font-display font-800 text-brand-500"><%= messages.length %></p>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Total Messages</p>
+      </div>
+      <div class="stat-card">
+        <p class="text-3xl font-display font-800 text-brand-500"><%= visitors.toLocaleString() %></p>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Total Visitors</p>
+      </div>
+      <div class="stat-card col-span-2 sm:col-span-1">
+        <p class="text-3xl font-display font-800 text-brand-500">
+          <%= messages.filter(m => {
+            const d = new Date(m.created_at);
+            const now = new Date();
+            return d.toDateString() === now.toDateString();
+          }).length %>
+        </p>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Messages Today</p>
+      </div>
+    </div>
+
+    <!-- Messages Table -->
+    <% if (messages.length === 0) { %>
+    <div class="text-center py-24 rounded-2xl border-2 border-dashed border-gray-200 dark:border-dark-600">
+      <p class="text-5xl mb-4">📭</p>
+      <p class="font-display text-xl font-600 text-gray-400 dark:text-gray-500">No messages yet</p>
+      <p class="text-sm text-gray-400 mt-1">Messages from the contact form will appear here.</p>
+    </div>
+    <% } else { %>
+    <div class="overflow-hidden rounded-2xl border border-gray-200 dark:border-dark-600 shadow-sm">
+      <!-- Table wrapper with horizontal scroll -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-gray-50 dark:bg-dark-800 border-b border-gray-200 dark:border-dark-600">
+              <th class="table-th w-12">#</th>
+              <th class="table-th">Name</th>
+              <th class="table-th">Email</th>
+              <th class="table-th">Message</th>
+              <th class="table-th">Received</th>
+              <th class="table-th w-20">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100 dark:divide-dark-600">
+            <% messages.forEach((msg, i) => { %>
+            <tr class="bg-white dark:bg-dark-800 hover:bg-brand-50 dark:hover:bg-dark-700 transition-colors duration-150">
+              <td class="table-td text-gray-400 font-mono"><%= msg.id %></td>
+              <td class="table-td font-600 text-gray-900 dark:text-white whitespace-nowrap"><%= msg.name %></td>
+              <td class="table-td text-brand-500 whitespace-nowrap">
+                <a href="mailto:<%= msg.email %>" class="hover:underline"><%= msg.email %></a>
+              </td>
+              <td class="table-td text-gray-600 dark:text-gray-400 max-w-xs">
+                <div class="line-clamp-2"><%= msg.message %></div>
+              </td>
+              <td class="table-td text-gray-400 whitespace-nowrap text-xs">
+                <%= new Date(msg.created_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) %>
+              </td>
+              <td class="table-td">
+                <form action="/admin/delete/<%= msg.id %>" method="POST"
+                      onsubmit="return confirm('Delete this message from <%= msg.name %>?')">
+                  <button type="submit"
+                    class="px-2 py-1 text-xs rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors border border-red-200 dark:border-red-900">
+                    Delete
+                  </button>
+                </form>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p class="text-xs text-gray-400 text-right mt-3">Showing <%= messages.length %> message<%= messages.length !== 1 ? 's' : '' %></p>
+    <% } %>
+
+  </div>
+</section>
+
+<%- include('partials/footer') %>

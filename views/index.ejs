@@ -1,0 +1,153 @@
+<%- include('partials/header', { pageTitle: 'Home' }) %>
+
+<!-- ═══════════════════════════════════════════
+     HERO SECTION
+═══════════════════════════════════════════ -->
+<section class="relative overflow-hidden pt-20 pb-32">
+  <!-- Animated background blobs -->
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <!-- Grid pattern overlay -->
+    <div class="absolute inset-0 bg-grid opacity-[0.03] dark:opacity-[0.06]"></div>
+  </div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+
+      <!-- Badge -->
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-brand-200 dark:border-brand-900/50 bg-brand-50 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400 text-sm font-medium mb-8 animate-fade-in">
+        <span class="w-2 h-2 bg-brand-500 rounded-full animate-pulse"></span>
+        Five Devs · Infinite Ideas
+      </div>
+
+      <!-- Headline -->
+      <h1 class="font-display text-6xl sm:text-7xl lg:text-8xl font-extrabold leading-[0.9] tracking-tight mb-6 animate-slide-up">
+        <span class="block text-gray-900 dark:text-white">We are</span>
+        <span class="block relative">
+          <span class="text-brand-500 relative z-10">LazyCoders</span>
+          <!-- Underline SVG -->
+          <svg class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-full max-w-lg" viewBox="0 0 400 20" fill="none">
+            <path d="M10 15 Q200 5 390 15" stroke="#f97316" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.5"/>
+          </svg>
+        </span>
+      </h1>
+
+      <p class="mt-8 text-lg sm:text-xl text-gray-500 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed animate-slide-up" style="animation-delay:0.1s">
+        A team of five engineers building scalable systems, AI tools, healthcare platforms, and IoT solutions. We ship real things that matter.
+      </p>
+
+      <!-- CTAs -->
+      <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up" style="animation-delay:0.2s">
+        <a href="/projects" class="btn-primary">
+          View Our Projects
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+        <a href="/contact" class="btn-secondary">
+          Get in Touch
+        </a>
+      </div>
+
+      <!-- Stats bar -->
+      <div class="mt-16 grid grid-cols-3 gap-4 max-w-md mx-auto animate-slide-up" style="animation-delay:0.3s">
+        <div class="text-center p-4 rounded-2xl bg-white dark:bg-dark-800 shadow-sm border border-gray-100 dark:border-dark-600">
+          <p class="font-display text-3xl font-800 text-brand-500">5</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Team Members</p>
+        </div>
+        <div class="text-center p-4 rounded-2xl bg-white dark:bg-dark-800 shadow-sm border border-gray-100 dark:border-dark-600">
+          <p class="font-display text-3xl font-800 text-brand-500">4</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Projects Built</p>
+        </div>
+        <div class="text-center p-4 rounded-2xl bg-white dark:bg-dark-800 shadow-sm border border-gray-100 dark:border-dark-600">
+          <p class="font-display text-3xl font-800 text-brand-500"><%= visitors.toLocaleString() %></p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Visitors</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     TEAM SECTION
+═══════════════════════════════════════════ -->
+<section class="py-24 bg-gray-50 dark:bg-dark-800/50" id="team">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Section Header -->
+    <div class="text-center mb-16">
+      <p class="section-label">The Crew</p>
+      <h2 class="section-title">Meet the Team</h2>
+      <p class="section-subtitle">Five engineers, one mission: build things that actually work.</p>
+    </div>
+
+    <!-- Team Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+      <% teamMembers.forEach((member, i) => { %>
+      <div class="member-card group" style="animation-delay: <%= i * 0.08 %>s">
+
+        <!-- Top accent line -->
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-400 to-brand-600 rounded-t-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+        <!-- Photo -->
+        <div class="relative mb-5">
+          <div class="w-32 h-32 mx-auto rounded-2xl overflow-hidden ring-4 ring-white dark:ring-dark-700 shadow-lg group-hover:ring-brand-300 dark:group-hover:ring-brand-700 transition-all duration-300 group-hover:scale-105 transform">
+            <img
+              src="<%= member.photo %>"
+              alt="<%= member.name %>"
+              class="w-full h-full object-cover"
+              onerror="this.src='https://ui-avatars.com/api/?name=<%= encodeURIComponent(member.name) %>&background=f97316&color=fff&size=200&bold=true'"
+            />
+          </div>
+          <!-- Online indicator -->
+          <span class="absolute bottom-0 right-1/2 translate-x-8 w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-dark-700 rounded-full"></span>
+        </div>
+
+        <!-- Info -->
+        <div class="text-center flex-1">
+          <h3 class="font-display font-700 text-xl text-gray-900 dark:text-white group-hover:text-brand-500 transition-colors duration-200">
+            <%= member.name %>
+          </h3>
+        </div>
+
+        <!-- Social links -->
+        <div class="flex items-center justify-center gap-3 pt-4 mt-2 border-t border-gray-100 dark:border-dark-600 w-full">
+          <a href="<%= member.github %>" target="_blank" rel="noopener noreferrer"
+             class="social-btn" aria-label="GitHub">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            GitHub
+          </a>
+          <a href="<%= member.linkedin %>" target="_blank" rel="noopener noreferrer"
+             class="social-btn social-btn-linkedin" aria-label="LinkedIn">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+            LinkedIn
+          </a>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     PROJECTS TEASER
+═══════════════════════════════════════════ -->
+<section class="py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <p class="section-label">What We Build</p>
+    <h2 class="section-title">Our Projects</h2>
+    <p class="section-subtitle">From blockchain to AI to IoT — real software solving real problems.</p>
+    <div class="mt-8">
+      <a href="/projects" class="btn-primary">
+        See All Projects
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LazyCoder's <%= typeof pageTitle !== 'undefined' ? '— ' + pageTitle : '' %></title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Clash Display + DM Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet" />
+
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="/style.css" />
+
+  <!-- Tailwind config -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Syne', 'sans-serif'],
+            body:    ['DM Sans', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50:  '#fff7ed',
+              100: '#ffedd5',
+              400: '#fb923c',
+              500: '#f97316',
+              600: '#ea580c',
+              900: '#431407',
+            },
+            dark: {
+              900: '#0a0a0f',
+              800: '#111118',
+              700: '#1a1a27',
+              600: '#252535',
+            }
+          },
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+            'glow':  'glow 2s ease-in-out infinite alternate',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%':       { transform: 'translateY(-10px)' },
+            },
+            glow: {
+              '0%':   { boxShadow: '0 0 20px rgba(249,115,22,0.3)' },
+              '100%': { boxShadow: '0 0 40px rgba(249,115,22,0.7)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="font-body bg-white dark:bg-dark-900 text-gray-900 dark:text-gray-100 transition-colors duration-300 min-h-screen flex flex-col">
+
+  <!-- ── NAVBAR ── -->
+  <nav class="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-dark-800/80 border-b border-gray-200 dark:border-dark-600">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-2 group">
+          <span class="text-2xl font-display font-800 tracking-tight">
+            <span class="text-gray-900 dark:text-white">Lazy</span><span class="text-brand-500">Coders</span>
+          </span>
+          <span class="text-xs font-body text-gray-400 dark:text-gray-500 mt-1 hidden sm:block">/ team</span>
+        </a>
+
+        <!-- Desktop Nav Links -->
+        <div class="hidden md:flex items-center gap-1">
+          <a href="/"         class="nav-link <%= page === 'home'     ? 'nav-active' : '' %>">Home</a>
+          <a href="/projects" class="nav-link <%= page === 'projects' ? 'nav-active' : '' %>">Projects</a>
+          <a href="/contact"  class="nav-link <%= page === 'contact'  ? 'nav-active' : '' %>">Contact</a>
+        </div>
+
+        <!-- Right: Dark mode + mobile menu -->
+        <div class="flex items-center gap-3">
+          <!-- Dark mode toggle -->
+          <button id="darkToggle" aria-label="Toggle dark mode"
+            class="w-9 h-9 rounded-full flex items-center justify-center
+                   bg-gray-100 dark:bg-dark-700
+                   hover:bg-brand-100 dark:hover:bg-dark-600
+                   transition-all duration-200 text-lg">
+            <span class="dark:hidden">🌙</span>
+            <span class="hidden dark:inline">☀️</span>
+          </button>
+
+          <!-- Mobile hamburger -->
+          <button id="mobileMenuBtn" class="md:hidden w-9 h-9 rounded-full flex items-center justify-center bg-gray-100 dark:bg-dark-700">
+            <svg id="menuIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Menu Dropdown -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 dark:border-dark-600 bg-white dark:bg-dark-800 px-4 py-3 space-y-1">
+      <a href="/"         class="mobile-nav-link <%= page === 'home'     ? 'mobile-nav-active' : '' %>">Home</a>
+      <a href="/projects" class="mobile-nav-link <%= page === 'projects' ? 'mobile-nav-active' : '' %>">Projects</a>
+      <a href="/contact"  class="mobile-nav-link <%= page === 'contact'  ? 'mobile-nav-active' : '' %>">Contact</a>
+    </div>
+  </nav>
+
+  <!-- Page Content Slot -->
+  <main class="flex-1">
