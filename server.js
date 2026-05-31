@@ -107,7 +107,7 @@ const teamMembers = [
 ];
 
 // ─────────────────────────────────────────────
-// Data: Projects (with emojis re-added for display)
+// Data: Projects (with clear descriptions)
 // ─────────────────────────────────────────────
 const projects = [
   {
@@ -209,28 +209,71 @@ app.get("/contact", (req, res) => {
 
 /** CONTACT PAGE (POST) — Save message to DB */
 app.post("/contact", async (req, res) => {
+  console.log("📝 Contact form submitted");
+  console.log("Request body:", req.body);
+  
   const { name, email, message } = req.body;
 
   // Server-side validation
   if (!name?.trim() || !email?.trim() || !message?.trim()) {
+    console.log("❌ Validation failed - missing fields");
     return res.redirect("/contact?error=All+fields+are+required");
   }
 
   // Basic email format check
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
+    console.log("❌ Invalid email format");
     return res.redirect("/contact?error=Please+enter+a+valid+email+address");
   }
 
+  // Check minimum length
+  if (name.trim().length < 2) {
+    return res.redirect("/contact?error=Name must be at least 2 characters");
+  }
+  
+  if (message.trim().length < 10) {
+    return res.redirect("/contact?error=Message must be at least 10 characters");
+  }
+
   try {
-    await pool.query(
-      "INSERT INTO messages (name, email, message) VALUES ($1, $2, $3)",
+    console.log("📤 Attempting to insert into database...");
+    
+    // First, check if table exists
+    const tableCheck = await pool.query(`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_name = 'messages'
+      );
+    `);
+    
+    if (!tableCheck.rows[0].exists) {
+      console.log("⚠️ Messages table doesn't exist! Creating it now...");
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS messages (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          email VARCHAR(255) NOT NULL,
+          message TEXT NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+      console.log("✅ Messages table created!");
+    }
+    
+    // Insert the message
+    const result = await pool.query(
+      "INSERT INTO messages (name, email, message) VALUES ($1, $2, $3) RETURNING id",
       [name.trim(), email.trim(), message.trim()]
     );
+    
+    console.log(`✅ Message inserted successfully! ID: ${result.rows[0].id}`);
     res.redirect("/contact?success=1");
+    
   } catch (err) {
-    console.error("DB insert error:", err.message);
-    res.redirect("/contact?error=Something+went+wrong.+Please+try+again+later");
+    console.error("❌ DB insert error:", err.message);
+    console.error("Full error details:", err);
+    res.redirect("/contact?error=Database error: " + encodeURIComponent(err.message));
   }
 });
 
@@ -316,6 +359,38 @@ app.post("/admin/delete/:id", requireAdmin, async (req, res) => {
 });
 
 // ─────────────────────────────────────────────
+// Debug Endpoint (Remove in production)
+// ─────────────────────────────────────────────
+app.get("/debug/db-test", async (req, res) => {
+  try {
+    // Test connection
+    const timeResult = await pool.query("SELECT NOW()");
+    
+    // Test insert
+    const insertResult = await pool.query(
+      "INSERT INTO messages (name, email, message) VALUES ($1, $2, $3) RETURNING id",
+      ["Debug User", "debug@test.com", "Debug test at " + new Date().toISOString()]
+    );
+    
+    // Get count
+    const countResult = await pool.query("SELECT COUNT(*) FROM messages");
+    
+    res.json({
+      success: true,
+      database_time: timeResult.rows[0],
+      inserted_id: insertResult.rows[0].id,
+      total_messages: parseInt(countResult.rows[0].count)
+    });
+  } catch (err) {
+    res.json({
+      success: false,
+      error: err.message,
+      stack: err.stack
+    });
+  }
+});
+
+// ─────────────────────────────────────────────
 // 404 Handler
 // ─────────────────────────────────────────────
 app.use((req, res) => {
@@ -328,5 +403,6 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`\n🚀 LazyCoders Portfolio running at http://localhost:${PORT}`);
   console.log(`   Admin panel: http://localhost:${PORT}/admin`);
+  console.log(`   Debug endpoint: http://localhost:${PORT}/debug/db-test`);
   console.log(`   Press Ctrl+C to stop.\n`);
 });
