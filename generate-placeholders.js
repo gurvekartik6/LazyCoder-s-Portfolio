@@ -36,8 +36,5 @@ members.forEach(({ file, name, color1, color2 }) => {
   
   // Copy as the jpg filename too
   fs.writeFileSync(path.join(dir, file), svg);
-  console.log(`✅ Created ${file}`);
+  console.log(`Created ${file}`);
 });
-
-console.log('\n📁 All placeholder images created in public/images/');
-console.log('   Replace with real photos when available.\n');
