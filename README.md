@@ -16,6 +16,7 @@ A team portfolio website built with Node.js, Express, EJS, TailwindCSS, and Post
 - Akshay Kamble
 - Darshan Bijewar
 - Prajwal Fupare
+- Gopal Wagh
 
 ## Features
 

@@ -9,6 +9,7 @@ const members = [
   { file: 'akshay.jpg',  name: 'AK', color1: '#06b6d4', color2: '#0891b2' },
   { file: 'darshan.jpg', name: 'DB', color1: '#10b981', color2: '#059669' },
   { file: 'prajwal.jpg', name: 'PF', color1: '#f43f5e', color2: '#e11d48' },
+  { file: 'Gopal_pic.jpg', name: 'GW', color1: '#71ec5e', color2: '#1de131' },
 ];
 
 const dir = path.join(__dirname, 'public/images');

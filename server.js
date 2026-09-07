@@ -85,6 +85,12 @@ const teamMembers = [
     github: "https://github.com/prajwalfupare",
     linkedin: "https://linkedin.com/in/prajwal-fupare",
   },
+    {
+    name: "Gopal Wagh",
+    photo: "/images/Gopal_pic.jpeg",
+    github: "https://github.com/gopalwagh",
+    linkedin: "https://www.linkedin.com/in/gopal-wagh-9ba402385",
+  },
 ];
 
 // ─────────────────────────────────────────────
